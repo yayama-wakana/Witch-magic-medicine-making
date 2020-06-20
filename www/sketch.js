@@ -163,6 +163,34 @@ function mousePressed(){
     return -100 < entity.x;
   }
 
+  /**
+  * 2つのエンティティが衝突しているかどうかをチェックする
+  *
+  * @param entityA 衝突しているかどうかを確認したいエンティティ
+  * @param entityB 同上
+  * @param collisionXDistance 衝突しないギリギリのx距離
+  * @param collisionYDistance 衝突しないギリギリのy距離
+  * @returns 衝突していたら `true` そうでなければ `false` を返す
+  */
+  function entitiesAreColliding(
+    entityA,
+    entityB,
+    collisionXDistance,
+    collisionYDistance
+  ) {
+    // xとy、いずれかの距離が十分開いていたら、衝突していないので false を返す
+
+    let currentXDistance = abs(entityA.x - entityB.x); // 現在のx距離
+    if (collisionXDistance <= currentXDistance) 
+      return false;
+
+    let currentYDistance = abs(entityA.y - entityB.y); // 現在のy距離
+    if (collisionYDistance <= currentYDistance) 
+      return false;
+
+    return true; // ここまで来たら、x方向でもy方向でも重なっているので true
+  } 
+
   /** プレイヤーエンティティ */
   let player;
 
@@ -223,6 +251,14 @@ function mousePressed(){
   // プレイヤーが死んでいたらゲームオーバー
     if (!playerIsAlive(player)) 
       gameState = "gameover";
+
+      // 衝突判定
+    for (let block of blocks) {
+      if (entitiesAreColliding(player, block, 20 + 40, 20 + 200)) {
+        gameState = "gameover";
+        break;
+      }
+    }
   }
 
   /** ゲームの描画 */
